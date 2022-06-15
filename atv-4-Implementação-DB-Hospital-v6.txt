@@ -1,0 +1,93 @@
+/* Discentes: Alisson Cerutti, André Relíquias, Elton M. de Lima, Giulianna Moretti, Igor Carneiro,
+Matheus Carvalho, Michael Nunes e Rafael Simões */
+
+CREATE TABLE Hospital ( idHospitalPK SERIAL UNIQUE,
+						endereco VARCHAR(45),
+						telefone VARCHAR(45),
+						PRIMARY KEY (idHospitalPK)	  
+);
+
+CREATE TABLE Controle ( idControlePK  SERIAL UNIQUE,
+						entrada TIMESTAMP,
+					   saida TIMESTAMP,
+					   PRIMARY KEY (idControlePK)
+
+);
+
+CREATE TABLE Uniforme ( 	idUniformePK INT UNIQUE,
+							corUniformePK VARCHAR (45) UNIQUE,
+					   	    tamanho SMALLINT,
+		       				PRIMARY KEY (idUniformePK,corUniformePK)
+
+);
+
+CREATE TABLE Funcionario (	idFuncionarioPK INT UNIQUE,
+		       			 	profissao VARCHAR (45),
+							uniforme_idUniformeFK INT,
+							hospital_idHospitalFK SERIAL,
+							uniforme_corUniformeFK VARCHAR (45),
+		       			 	PRIMARY KEY (idFuncionarioPK),
+		       			    FOREIGN KEY (uniforme_idUniformeFK) REFERENCES Uniforme (idUniformePK) ON DELETE RESTRICT ON UPDATE CASCADE,
+							FOREIGN KEY (hospital_idHospitalFK) REFERENCES Hospital (idHospitalPK) ON DELETE RESTRICT ON UPDATE CASCADE,
+							FOREIGN KEY (uniforme_corUniformeFK) REFERENCES Uniforme (corUniformePK) ON DELETE RESTRICT ON UPDATE CASCADE
+					   
+
+);
+
+
+CREATE TABLE Pessoa (   idPessoaPK INT UNIQUE,
+						nome VARCHAR (45),
+						idade SMALLINT,
+						CPF INT,
+						endereco VARCHAR (45),
+						Funcionario_idFuncionarioFK INT,
+						PRIMARY KEY (idPessoaPK),
+                        FOREIGN KEY (Funcionario_idFuncionarioFK) REFERENCES Funcionario (idFuncionarioPK) ON DELETE RESTRICT ON UPDATE CASCADE
+	  
+);
+
+
+CREATE TABLE Paciente ( idPacientePK INT UNIQUE,
+						classificacao_de_risco VARCHAR (45),
+						exame_medico BOOLEAN,
+						desc_exame VARCHAR (45),
+						Pessoa_idPessoaFK INT,
+						Funcionario_idFuncionarioFK INT,
+ 						  uniforme_corUniformeFK VARCHAR (45),		
+						PRIMARY KEY (idPacientePK),
+						FOREIGN KEY (Pessoa_idPessoaFK) REFERENCES Pessoa (idPessoaPK) ON DELETE RESTRICT ON UPDATE CASCADE,
+						FOREIGN KEY (Funcionario_idFuncionarioFK) REFERENCES Funcionario (idFuncionarioPK) ON DELETE RESTRICT ON UPDATE CASCADE,
+						  FOREIGN KEY (Uniforme_corUniformeFK) REFERENCES Uniforme (corUniformePK) ON DELETE RESTRICT ON UPDATE CASCADE
+	  
+);
+
+
+CREATE TABLE Quarto (   idQuartoPK INT UNIQUE,
+					    andar SMALLINT,
+						numero SMALLINT,
+					    ocupacao boolean,
+						 camera VARCHAR (45),
+						Hospital_idHospitalFK SERIAL,
+						Paciente_idPacienteFK INT,
+						Controle_idControleFK SERIAL,
+		       			PRIMARY KEY (idQuartoPK),
+ 						FOREIGN KEY (Hospital_idHospitalFK) REFERENCES Hospital (idHospitalPK) ON DELETE RESTRICT ON UPDATE CASCADE,
+						FOREIGN KEY (Paciente_idPacienteFK) REFERENCES Paciente (idPacientePK) ON DELETE RESTRICT ON UPDATE CASCADE,
+						FOREIGN KEY (Controle_idControleFK) REFERENCES Controle (idControlePK) ON DELETE RESTRICT ON UPDATE CASCADE
+	 	  
+	  
+);
+
+
+CREATE TABLE Imagem (   	 idImagemPK INT UNIQUE,
+			    			 titulo VARCHAR (45),
+			    			 descricao VARCHAR (45),  
+		             	     caminhoImg VARCHAR (45),
+			    			 Quarto_idQuartoFK INT,
+							 Pessoa_idPessoaFK INT,
+								corUniforme_reg VARCHAR (45),
+			    			 PRIMARY KEY (idImagemPK),
+			     			 FOREIGN KEY (Quarto_idQuartoFK) REFERENCES Quarto (idQuartoPK) ON DELETE RESTRICT ON UPDATE CASCADE,
+							 FOREIGN KEY (Pessoa_idPessoaFK) REFERENCES Pessoa (idPessoaPK) ON DELETE RESTRICT ON UPDATE CASCADE
+	  
+);
